@@ -1,0 +1,2 @@
+./bugs.py: This is a test bug | id:41444eac158f85ac92db5ae065cf55bb0266ac70
+./bugs.py: Implement glob matching for ignore file entries | id:9d5e1eca1ad4be070ce6d99dd892dfb153f98167

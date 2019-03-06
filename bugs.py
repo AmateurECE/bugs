@@ -16,6 +16,8 @@ import sys
 import re
 
 from t import t
+from colorama import colorama
+from colorama.colorama import Fore, Style
 
 ###############################################################################
 # FUNCTIONS
@@ -59,13 +61,17 @@ class Bugs:
 
     def buildFileList(self):
         """INTERNAL. Builds the list of files to search for TODO comments."""
-        rejectRegexes = ['.git/', 'bugs'] # Automatically ignore .git/ and bugs
+        # Automatically ignore .git/ and bugs
+        rejectRegexes = ['.git/', 'bugs', '~']
         # Read .bignore file, if it exists
         rejectRegexes.extend(self.readIgnoreFile(self.gitDir + '/.bignore')
                              or [])
         # Read .gitignore file, if it exists
         rejectRegexes.extend(self.readIgnoreFile(self.gitDir + '/.gitignore')
                              or [])
+
+        # Remove the empty string
+        rejectRegexes = list(filter(('').__ne__, rejectRegexes))
 
         # Walk the repository
         #pylint: disable=unused-variable
@@ -83,6 +89,7 @@ class Bugs:
                 reject = False
                 # If the filename matches any of the lines in .bignore,
                 # reject it.
+                # TODO: Implement glob matching for ignore file entries
                 for regex in rejectRegexes:
                     if regex in fn:
                         reject = True
@@ -107,7 +114,8 @@ class Bugs:
                     # Add the bug to the dictionary
                     self.bugDict.add_task(fn + ': ' + bug)
             except UnicodeDecodeError:
-                print(('Warning: Could not decode file "{}". If this is a '
+                print((Fore.YELLOW + 'Warning' + Style.RESET_ALL +
+                       ': Could not decode file "{}". If this is a '
                        'binary file, consider adding it to your '
                        '.bignore or .gitignore').format(fn), file=sys.stderr)
                 continue
@@ -141,6 +149,8 @@ class Bugs:
 
 def main():
     """Run bugs"""
+    colorama.init() # Initialize colorama
+
     ### Find the Git repository
     bugs = Bugs('.')
 
@@ -154,6 +164,7 @@ def main():
             return 1
     except IndexError:
         bugs.printBugs()
+    return 0
 
 if __name__ == '__main__':
     main()
