@@ -3,11 +3,11 @@
 This tools is based off of [t](https://github.com/sjl/t). It searches the
 current git repository (and all subdirectories) for `TODO` comments in code. It
 then puts these comments into a file in the top level directory of the
-repository with the name `bugs`. It matches C/C++ and Bash style `TODO`
+repository with the name `bugs`. It matches C/C++, LaTeX, and Bash style `TODO`
 comments of the form:
 
 ```
-(#|/(\*|/))\s*TODO:\s*(.*)
+(%|#|/(\*|/))\s*TODO:\s*(.*)
 ```
 
 When run without any arguments, it prints the bugs in the `bugs` file in the

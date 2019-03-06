@@ -26,7 +26,7 @@ class Bugs:
 
     # Static class members
     # Matches C/C++ and Bash style comments
-    todoRegex = r'(#|/(\*|/))\s*TODO:\s*(.*)'
+    todoRegex = r'(%|#|/(\*|/))\s*TODO:\s*(.*)'
     r_todo = re.compile(todoRegex)
 
     def __init__(self, pwd):
@@ -59,7 +59,7 @@ class Bugs:
 
     def buildFileList(self):
         """INTERNAL. Builds the list of files to search for TODO comments."""
-        rejectRegexes = ['.git/'] # Automatically ignore .git/
+        rejectRegexes = ['.git/', 'bugs'] # Automatically ignore .git/ and bugs
         # Read .bignore file, if it exists
         rejectRegexes.extend(self.readIgnoreFile(self.gitDir + '/.bignore')
                              or [])
