@@ -32,7 +32,19 @@ class Bugs:
     r_todo = re.compile(todoRegex)
 
     def __init__(self, pwd):
+        # Locate the root of the git repository, or if we aren't in one.
         self.gitDir = self.findRepositoryRoot(pwd)
+
+    def synchronizeBugDict(self, delete=False):
+        """Initializes t.py's TaskDict object with the current state."""
+        if delete:
+            # Remove the bugs file if it exists
+            try:
+                os.unlink(self.gitDir + '/bugs')
+            except FileNotFoundError:
+                pass
+
+        # Initialize the TaskDict object
         self.bugDict = t.TaskDict(taskdir=self.gitDir, name='bugs')
 
     @staticmethod
@@ -99,12 +111,10 @@ class Bugs:
 
     def update(self):
         """Update the bugs file in the gitDir directory."""
+        # Initialize the BugDict
+        self.synchronizeBugDict(delete=True)
+        # Build the file list
         fileList = self.buildFileList()
-        # Remove the bugs file if it exists
-        try:
-            os.unlink(self.gitDir + '/bugs')
-        except FileNotFoundError:
-            pass
 
         # Begin looking for bugs
         for fn in fileList:
@@ -141,6 +151,9 @@ class Bugs:
 
     def printBugs(self):
         """Print the bugs in the bugs file"""
+        # Initialize the bugDict object
+        self.synchronizeBugDict()
+        # Print the list of bugs
         self.bugDict.print_list()
 
 ###############################################################################
