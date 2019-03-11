@@ -28,6 +28,7 @@ class Bugs:
 
     # Static class members
     # Matches C/C++ and Bash style comments
+    # TODO: Make to work with emacs-lisp comments
     todoRegex = r'(%|#|/(\*|/))\s*TODO:\s*(.*)'
     r_todo = re.compile(todoRegex)
 
@@ -74,7 +75,7 @@ class Bugs:
     def buildFileList(self):
         """INTERNAL. Builds the list of files to search for TODO comments."""
         # Automatically ignore .git/ and bugs
-        rejectRegexes = ['.git/', 'bugs', '~']
+        rejectRegexes = ['.git/', '~']
         # Read .bignore file, if it exists
         rejectRegexes.extend(self.readIgnoreFile(self.gitDir + '/.bignore')
                              or [])
@@ -99,12 +100,13 @@ class Bugs:
             for fn in filenames:
                 fn = dirpath + '/' + fn
                 reject = False
-                # If the filename matches any of the lines in .bignore,
+                # If the filename matches any of the lines in rejectRegexes,
                 # reject it.
                 # TODO: Implement glob matching for ignore file entries
                 for regex in rejectRegexes:
-                    if regex in fn:
+                    if regex in fn or fn == 'bugs':
                         reject = True
+                        break
                 if not reject:
                     validPaths.append(fn)
         return validPaths
@@ -167,7 +169,6 @@ def main():
     ### Find the Git repository
     bugs = Bugs('.')
 
-    # TODO: This is a test bug
     try:
         ### Perform b update
         if sys.argv[1] == 'update':

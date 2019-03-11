@@ -1,2 +1,2 @@
-./bugs.py: This is a test bug | id:41444eac158f85ac92db5ae065cf55bb0266ac70
+./bugs.py: Make to work with emacs-lisp comments | id:49ad6e202eb9f81bc432b2ce3b70a39734fcf53d
 ./bugs.py: Implement glob matching for ignore file entries | id:9d5e1eca1ad4be070ce6d99dd892dfb153f98167
