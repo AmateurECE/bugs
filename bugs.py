@@ -58,7 +58,7 @@ class Bugs:
         rootDir = os.path.abspath(os.sep) # Platform independent
         while os.path.abspath(pwd) != rootDir:
             if gitHere.is_dir():
-                return pwd
+                return str(pwd)
             pwd = Path(os.fspath(pwd) + '/..')
             gitHere = Path(os.fspath(pwd) + '/.git')
         return None
