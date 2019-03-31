@@ -29,7 +29,7 @@ class Bugs:
     # Static class members
     # Matches C/C++ and Bash style comments
     # TODO: Make to work with emacs-lisp comments
-    todoRegex = r'(%|#|/(\*|/))\s*TODO:\s*(.*)'
+    todoRegex = r'(;;|%|#|/(\*|/))\s*TODO:\s*(.*)'
     r_todo = re.compile(todoRegex)
 
     def __init__(self, pwd):
@@ -168,6 +168,8 @@ def main():
 
     ### Find the Git repository
     bugs = Bugs('.')
+
+    # TODO: bugs.py uses parent repo's .bignore when repo is submodule
 
     try:
         ### Perform b update

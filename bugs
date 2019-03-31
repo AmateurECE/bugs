@@ -1,2 +1,3 @@
 ./bugs.py: Make to work with emacs-lisp comments | id:49ad6e202eb9f81bc432b2ce3b70a39734fcf53d
 ./bugs.py: Implement glob matching for ignore file entries | id:9d5e1eca1ad4be070ce6d99dd892dfb153f98167
+./bugs.py: bugs.py uses parent repo's .bignore when repo is submodule | id:afde8a73795fcc602a079b703face2d859363409
