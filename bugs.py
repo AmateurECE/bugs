@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import sys
 import re
+from glob import glob
 
 from t import t
 from colorama import colorama
@@ -22,6 +23,10 @@ from colorama.colorama import Fore, Style
 ###############################################################################
 # FUNCTIONS
 ###
+
+# TODO: Make filenames optional
+# TODO: Optionally print line numbers for comments
+# TODO: Optionally print only filename instead of full path.
 
 class Bugs:
     """Contains the logic of the `b' tool."""
@@ -68,14 +73,17 @@ class Bugs:
         """INTERNAL. Read ignoreFilename file for the list of regexes."""
         try:
             with open(ignoreFilename, 'r') as ignoreFile:
-                return [ln.rstrip('\n') for ln in ignoreFile.readlines()]
+                return list(filter(('').__ne__,
+                                   [ln.rstrip('\n')
+                                    for ln in ignoreFile.readlines()]))
         except FileNotFoundError:
             pass
 
     def buildFileList(self):
         """INTERNAL. Builds the list of files to search for TODO comments."""
         # Automatically ignore .git/ and bugs
-        rejectRegexes = ['.git/', '~']
+        rejectFilenames = ['.git/', '~']
+        rejectRegexes = []
         # Read .bignore file, if it exists
         rejectRegexes.extend(self.readIgnoreFile(self.gitDir + '/.bignore')
                              or [])
@@ -83,32 +91,23 @@ class Bugs:
         rejectRegexes.extend(self.readIgnoreFile(self.gitDir + '/.gitignore')
                              or [])
 
-        # Remove the empty string
-        rejectRegexes = list(filter(('').__ne__, rejectRegexes))
+        # Expand shell-style globs in rejectRegexes
+        for regex in rejectRegexes:
+            if '*' in regex:
+                rejectFilenames.extend(glob('./**/' + regex, recursive=True))
+            else:
+                rejectFilenames.append(regex)
 
         # Walk the repository
-        #pylint: disable=unused-variable
         validPaths = list()
-        for dirpath, dirnames, filenames in os.walk(self.gitDir):
-            # First, check if the dirpath contains something we're supposed to
-            # ignore.
-            for regex in rejectRegexes:
-                if regex in dirpath:
-                    continue
-
-            # Then, consider each file in the current directory.
-            for fn in filenames:
-                fn = dirpath + '/' + fn
-                reject = False
-                # If the filename matches any of the lines in rejectRegexes,
-                # reject it.
-                # TODO: Implement glob matching for ignore file entries
-                for regex in rejectRegexes:
-                    if regex in fn or fn == 'bugs':
-                        reject = True
-                        break
-                if not reject:
-                    validPaths.append(fn)
+        for filename in glob('./**/*', recursive=True):
+            invalid = False
+            for regex in rejectFilenames:
+                if regex in filename or regex == filename \
+                   or Path(filename).is_dir():
+                    invalid = True
+            if not invalid:
+                validPaths.append(filename)
         return validPaths
 
     def update(self):
