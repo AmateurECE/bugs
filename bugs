@@ -1,5 +1,6 @@
+./bugs.py: Add flags for optional behavior | id:0a9d034a2b942cd36745cec10e6d8ad61f6288eb
 ./bugs.py: Make filenames optional | id:11a37702fe8bb21ebd605b79243831a3e9f47f75
 ./bugs.py: Optionally print line numbers for comments | id:23221d89a210e6e48144c0cf0088896eaefaab9e
-./bugs.py: Make to work with emacs-lisp comments | id:49ad6e202eb9f81bc432b2ce3b70a39734fcf53d
+./bugs.py: Determine the config | id:8addf76effc2bf3a346393d4369c1e3c4192871e
 ./bugs.py: Optionally print only filename instead of full path. | id:a6858076a0c62be0c8a73dcbc8c93775b37d333f
 ./bugs.py: bugs.py uses parent repo's .bignore when repo is submodule | id:afde8a73795fcc602a079b703face2d859363409

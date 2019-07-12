@@ -33,7 +33,6 @@ class Bugs:
 
     # Static class members
     # Matches C/C++ and Bash style comments
-    # TODO: Make to work with emacs-lisp comments
     todoRegex = r'(;;|%|#|/(\*|/))\s*TODO:\s*(.*)'
     r_todo = re.compile(todoRegex)
 
@@ -155,7 +154,7 @@ class Bugs:
         # Initialize the bugDict object
         self.synchronizeBugDict()
         # Print the list of bugs
-        self.bugDict.print_list()
+        self.bugDict.print_list(quiet=True)
 
 ###############################################################################
 # MAIN
@@ -169,6 +168,10 @@ def main():
     bugs = Bugs('.')
 
     # TODO: bugs.py uses parent repo's .bignore when repo is submodule
+    # TODO: Add flags for optional behavior
+    # TODO: Determine the config
+    #       based on the format of the strings in the previous file (if exists)
+    #       then overwrite with any flags.
 
     try:
         ### Perform b update
