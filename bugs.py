@@ -10,6 +10,7 @@
 # LAST EDITED:	    03/01/2019
 ###
 
+from argparse import ArgumentParser, RawTextHelpFormatter
 from pathlib import Path
 import os
 import sys
@@ -21,12 +22,60 @@ from colorama import colorama
 from colorama.colorama import Fore, Style
 
 ###############################################################################
-# FUNCTIONS
+# Class BugTracker
 ###
 
 # TODO: Make filenames optional
 # TODO: Optionally print line numbers for comments
 # TODO: Optionally print only filename instead of full path.
+
+class BugTracker:
+    """Controls the logic concerning the usage of the Bugs class."""
+
+    def __init__(self, args, bugs):
+        self.args = vars(self.parseArgs(args))
+        self.bugs = bugs
+
+    @staticmethod
+    def parseArgs(args):
+        """Parse 'args' as a list of command line arguments."""
+        parser = ArgumentParser()
+        subparsers = parser.add_subparsers(dest='function',
+                                           help='help for subcommand')
+        updateParser = subparsers.add_parser('update',
+                                             help=('Update the list of bugs '
+                                                   'for this repository'),
+                                             formatter_class=
+                                             RawTextHelpFormatter)
+        updateParser.add_argument("--path", "-p", type=str,
+                                  help=('Select the format of the file path '
+                                        'in the output file:\n'
+                                        '  * long:  Show full path\n'
+                                        '  * short: Show only file name\n'
+                                        '  * none:  Do not show the filename'))
+        updateParser.add_argument("-l", "--line-numbers", action="store_true",
+                                  default=False, help=('Show line numbers in '
+                                                       'the output. Only '
+                                                       'valid if --path is not'
+                                                       ' none'))
+        subparsers.add_parser('print', help=('Print the list of bugs for this'
+                                             ' repository'))
+        return parser.parse_args(args)
+
+    def run(self):
+        """Perform the function of the program."""
+        if self.args['function'] == 'update':
+            self.bugs.update()
+        elif self.args['function'] == 'print':
+            self.bugs.printBugs()
+        else:
+            print('fatal: command not understood')
+            return 1
+        return 0
+
+###############################################################################
+# Class Bugs
+###
 
 class Bugs:
     """Contains the logic of the `b' tool."""
@@ -39,6 +88,7 @@ class Bugs:
     def __init__(self, pwd):
         # Locate the root of the git repository, or if we aren't in one.
         self.gitDir = self.findRepositoryRoot(pwd)
+        self.bugDict = None
 
     def synchronizeBugDict(self, delete=False):
         """Initializes t.py's TaskDict object with the current state."""
@@ -164,25 +214,14 @@ def main():
     """Run bugs"""
     colorama.init() # Initialize colorama
 
-    ### Find the Git repository
-    bugs = Bugs('.')
-
     # TODO: bugs.py uses parent repo's .bignore when repo is submodule
-    # TODO: Add flags for optional behavior
     # TODO: Determine the config
     #       based on the format of the strings in the previous file (if exists)
     #       then overwrite with any flags.
 
-    try:
-        ### Perform b update
-        if sys.argv[1] == 'update':
-            bugs.update()
-        else:
-            print('fatal: command not understood')
-            return 1
-    except IndexError:
-        bugs.printBugs()
-    return 0
+    ### Find the Git repository
+    bugTracker = BugTracker(sys.argv[1:], Bugs('.'))
+    return bugTracker.run()
 
 if __name__ == '__main__':
     main()

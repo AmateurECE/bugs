@@ -1,4 +1,3 @@
-./bugs.py: Add flags for optional behavior | id:0a9d034a2b942cd36745cec10e6d8ad61f6288eb
 ./bugs.py: Make filenames optional | id:11a37702fe8bb21ebd605b79243831a3e9f47f75
 ./bugs.py: Optionally print line numbers for comments | id:23221d89a210e6e48144c0cf0088896eaefaab9e
 ./bugs.py: Determine the config | id:8addf76effc2bf3a346393d4369c1e3c4192871e
